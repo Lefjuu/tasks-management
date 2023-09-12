@@ -1,6 +1,6 @@
 const express = require('express');
 const { create } = require('./lib/express.lib');
-const pool = require('./lib/postgres.lib.js');
+const { db } = require('./lib/postgres.lib.js');
 const app = express();
 
 const init = async () => {
@@ -8,7 +8,7 @@ const init = async () => {
     await create(app);
 
     // postgresql
-    await pool();
+    await db();
 };
 
 module.exports = { init, app };

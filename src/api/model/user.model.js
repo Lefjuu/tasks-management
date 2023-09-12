@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../db'); // Import your Sequelize instance
+const { sequelize } = require('../../lib/postgres.lib');
 
 const User = sequelize.define(
     'User',

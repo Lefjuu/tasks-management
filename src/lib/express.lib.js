@@ -7,12 +7,8 @@ const globalErrorHandler = require('../util/error/ErrorHandler');
 const rateLimit = require('express-rate-limit');
 const { NODE_ENV, CLIENT_HOSTNAME } = require('../config/index.js');
 const AppError = require('../util/error/AppError');
-// const {
-//     authRoutes,
-//     userRoutes,
-//     taskRoutes,
-//     timetableRoutes,
-// } = require('../api/routes');
+const passport = require('passport');
+const { authRoutes } = require('../api/routes');
 
 const create = async (app) => {
     app.use(helmet());
@@ -34,28 +30,55 @@ const create = async (app) => {
     );
     app.use(cookieParser());
 
-    const corsOptions = {
-        origin: 'http://localhost:3000',
-        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-        credentials: true,
-        preflightContinue: false,
-        optionsSuccessStatus: 204,
-        allowedHeaders: [
-            'Content-Type',
-            'Authorization',
-            'Access-Control-Allow-Headers',
-        ],
-    };
+    app.use(passport.initialize());
+    app.use(passport.session());
 
-    app.use(cors(corsOptions));
+    require('../api/auth/passport.auth');
+
+    app.get('/', (req, res) => {
+        res.send('<a href="/auth/google">Authenticate with Google </a>');
+    });
+
+    app.get(
+        '/auth/google',
+        passport.authenticate('google', { scope: ['email', 'profile'] }),
+    );
+
+    app.get(
+        '/google/callback',
+        passport.authenticate('google', {
+            successRedirect: '/protected',
+            failureRedirect: '/auth/failure',
+        }),
+    );
+
+    app.get('/auth/failure', (req, res) => {
+        res.send('Failed');
+    });
+
+    app.get('/protected', (req, res) => {
+        res.send('Hello');
+    });
+
+    // const corsOptions = {
+    //     origin: 'http://localhost:3000',
+    //     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    //     credentials: true,
+    //     preflightContinue: false,
+    //     optionsSuccessStatus: 204,
+    //     allowedHeaders: [
+    //         'Content-Type',
+    //         'Authorization',
+    //         'Access-Control-Allow-Headers',
+    //     ],
+    // };
+
+    // app.use(cors(corsOptions));
 
     if (NODE_ENV === 'development') {
         app.use(morgan('dev'));
     }
-    // app.use('/api/v1', authRoutes);
-    // app.use('/api/v1/users', userRoutes);
-    // app.use('/api/v1/task', taskRoutes);
-    // app.use('/api/v1/timetable', timetableRoutes);
+    app.use('/api/v1/auth', authRoutes);
 
     app.all('*', (req, res, next) => {
         next(

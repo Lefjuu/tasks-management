@@ -1,6 +1,6 @@
-const AppError = require('../../utils/error/AppError.js');
-const Email = require('../../utils/email.js');
-const { UserModel } = require('../models');
+const AppError = require('../../util/error/AppError');
+const Email = require('../../util/email.js');
+const { UserModel } = require('../model');
 const crypto = require('crypto');
 
 exports.login = async (login, password) => {
@@ -74,7 +74,7 @@ exports.forgotPassword = async (email, url) => {
 
         return new AppError(
             'There was an error sending the email. Try again later!',
-            500
+            500,
         );
     }
 };

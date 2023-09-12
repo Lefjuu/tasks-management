@@ -3,7 +3,7 @@ const {
     JWT_SECRET_REFRESH_KEY,
     JWT_ACCESS_EXPIRES_IN,
     JWT_REFRESH_EXPIRES_IN,
-} = require('../src/config/index');
+} = require('../config/index');
 const jwt = require('jsonwebtoken');
 
 const generateAccessToken = (id) => {
@@ -23,7 +23,7 @@ exports.generateResponseWithTokensAndUser = async (
     statusCode,
     req,
     res,
-    message
+    message,
 ) => {
     const accessToken = await generateAccessToken(user._id);
     const refreshToken = await generateRefreshToken(user._id);

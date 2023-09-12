@@ -23,6 +23,9 @@ exports.POSTGRES_DATABASE = process.env.POSTGRES_DATABASE;
 exports.POSTGRES_PASSWORD = process.env.POSTGRES_PASSWORD;
 exports.POSTGRES_PORT = process.env.POSTGRES_PORT;
 
+exports.GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+exports.GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+
 exports.REDIS_HOSTNAME = process.env.REDIS_HOSTNAME;
 exports.REDIS_PORT = process.env.REDIS_PORT;
 exports.REDIS_EXPIRES_IN = process.env.REDIS_EXPIRES_IN;
