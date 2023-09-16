@@ -28,14 +28,20 @@ exports.generateResponseWithTokensAndUser = async (
     const accessToken = await generateAccessToken(user._id);
     const refreshToken = await generateRefreshToken(user._id);
 
-    res.cookie('access_token', accessToken, {
-        httpOnly: true,
-        secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
-    });
-    res.cookie('refresh_token', refreshToken, {
-        httpOnly: true,
-        secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
-    });
+    const secure = req
+        ? req.secure || req.headers['x-forwarded-proto'] === 'https'
+        : false;
+
+    if (req) {
+        res.cookie('access_token', accessToken, {
+            httpOnly: true,
+            secure,
+        });
+        res.cookie('refresh_token', refreshToken, {
+            httpOnly: true,
+            secure,
+        });
+    }
 
     user.password = undefined;
 

@@ -44,6 +44,27 @@ exports.signup = catchError(async (req, res, next) => {
     });
 });
 
+exports.authGoogle = catchError(async (req, res, next) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return next(new AppError('Please provide email and password!', 400));
+    }
+
+    const data = await AuthService.googleAuth(req.body);
+    if (data instanceof AppError) {
+        return next(data);
+    }
+
+    res.status(201).json({
+        status: 'success',
+        message: 'User registration successful',
+        data: {
+            user: data,
+        },
+    });
+});
+
 exports.getMe = (req, res, next) => {
     req.params.id = req.user.id;
     next();

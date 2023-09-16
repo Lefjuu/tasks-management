@@ -1,8 +1,10 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../../lib/postgres.lib');
+const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 
 const User = sequelize.define(
-    'User',
+    'users',
     {
         email: {
             type: DataTypes.STRING,
@@ -25,6 +27,14 @@ const User = sequelize.define(
             type: DataTypes.ENUM('employee', 'forwarder', 'admin'),
             defaultValue: 'employee',
         },
+        provider: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            defaultValue: 'local',
+        },
+        socialId: {
+            type: DataTypes.STRING,
+        },
         passwordChangedAt: DataTypes.DATE,
         passwordResetToken: DataTypes.STRING,
         passwordResetExpires: DataTypes.DATE,
@@ -37,9 +47,19 @@ const User = sequelize.define(
     },
     {
         hooks: {
-            beforeCreate: async (user) => {
-                const baseUsername =
-                    user.name.split(' ')[0].charAt(0) + user.name.split(' ')[1];
+            async beforeCreate(user) {
+                let baseUsername;
+                if (
+                    user.name.split(' ')[0].charAt(0) &&
+                    user.name.split(' ')[1]
+                ) {
+                    baseUsername =
+                        user.name.split(' ')[0].charAt(0) +
+                        user.name.split(' ')[1];
+                } else {
+                    baseUsername = user.name.split(' ')[0].charAt(0);
+                }
+
                 let username = baseUsername;
                 let count = 1;
 
@@ -56,18 +76,27 @@ const User = sequelize.define(
                     username = baseUsername + count;
                 }
 
-                user.username = username;
+                if (user.provider === 'local') {
+                    user.username = username;
 
-                const activationToken = crypto.randomBytes(32).toString('hex');
+                    const activationToken = crypto
+                        .randomBytes(32)
+                        .toString('hex');
 
-                user.verifyToken = crypto
-                    .createHash('sha256')
-                    .update(activationToken)
-                    .digest('hex');
-                user.verifyTokenExpires = new Date(Date.now() + 10 * 60 * 1000);
+                    user.verifyToken = crypto
+                        .createHash('sha256')
+                        .update(activationToken)
+                        .digest('hex');
+                    user.verifyTokenExpires = new Date(
+                        Date.now() + 10 * 60 * 1000,
+                    );
+                } else {
+                    user.active = true;
+                }
                 user.password = await bcrypt.hash(user.password, 12);
             },
-            beforeUpdate: function (user) {
+            beforeUpdate(user) {
+                // Existing beforeUpdate hook
                 if (user.changed('password')) {
                     user.passwordChangedAt = new Date() - 1000;
                 }
@@ -76,13 +105,12 @@ const User = sequelize.define(
     },
 );
 
-User.prototype.correctPassword = async function (
-    candidatePassword,
-    userPassword,
-) {
-    return await bcrypt.compare(candidatePassword, userPassword);
+// Prototype method for password comparison
+User.prototype.correctPassword = async function (candidatePassword) {
+    return await bcrypt.compare(candidatePassword, this.password);
 };
 
+// Prototype method for checking password change
 User.prototype.changedPasswordAfter = function (JWTTimestamp) {
     if (this.passwordChangedAt) {
         const changedTimestamp = parseInt(
@@ -95,6 +123,7 @@ User.prototype.changedPasswordAfter = function (JWTTimestamp) {
     return false;
 };
 
+// Prototype method for creating a password reset token
 User.prototype.createPasswordResetToken = function () {
     const resetToken = crypto.randomBytes(32).toString('hex');
     this.passwordResetToken = crypto
@@ -103,6 +132,62 @@ User.prototype.createPasswordResetToken = function () {
         .digest('hex');
     this.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000);
     return resetToken;
+};
+
+User.prototype.loginByLocal = async function (username, password) {
+    try {
+        console.log('now here');
+        const user = await User.findOne({
+            where: {
+                username: username,
+                provider: 'local',
+            },
+        });
+
+        if (!user) {
+            throw new Error(`${username}' is not registered.`);
+        }
+
+        const isMatch = await user.correctPassword(password);
+
+        if (!isMatch) {
+            throw new Error(`This password is not correct.`);
+        }
+
+        user.lastLogin = Date.now();
+
+        return await user.save();
+    } catch (error) {
+        throw error;
+    }
+};
+
+User.prototype.loginBySocial = async function (provider, profile) {
+    try {
+        console.log('and now here');
+        console.log(profile);
+        let user = await User.findOne({
+            where: {
+                provider,
+                socialId: profile.id,
+            },
+        });
+
+        if (!user) {
+            user = await User.create({
+                provider: provider,
+                name: profile.displayName,
+                username: profile.username,
+                email: profile.email || '',
+                socialId: profile.id,
+                password: 'social_login_password',
+            });
+        }
+
+        return await user.save();
+    } catch (error) {
+        throw error;
+    }
 };
 
 module.exports = User;

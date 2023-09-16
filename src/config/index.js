@@ -25,6 +25,8 @@ exports.POSTGRES_PORT = process.env.POSTGRES_PORT;
 
 exports.GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 exports.GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+exports.GOOGLE_SESSION = process.env.GOOGLE_SESSION;
+exports.GOOGLE_CALLBACK = process.env.GOOGLE_CALLBACK;
 
 exports.REDIS_HOSTNAME = process.env.REDIS_HOSTNAME;
 exports.REDIS_PORT = process.env.REDIS_PORT;

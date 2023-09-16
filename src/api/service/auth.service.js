@@ -36,6 +36,22 @@ exports.signup = async (newUser, url) => {
     }
 };
 
+exports.googleAuth = async (newUser) => {
+    const exists = await UserModel.exists({
+        email: newUser.email,
+    });
+    if (exists) {
+        return new AppError(`${newUser.email} is already registered`, 400);
+    } else {
+        const user = await UserModel.create(newUser);
+
+        const { password, __v, active, ...userWithoutPassword } =
+            user.toObject();
+
+        return userWithoutPassword;
+    }
+};
+
 exports.me = async (userId) => {
     const user = await UserModel.findById(userId);
 

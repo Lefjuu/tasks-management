@@ -5,10 +5,16 @@ const cors = require('cors');
 const morgan = require('morgan');
 const globalErrorHandler = require('../util/error/ErrorHandler');
 const rateLimit = require('express-rate-limit');
-const { NODE_ENV, CLIENT_HOSTNAME } = require('../config/index.js');
+const {
+    NODE_ENV,
+    CLIENT_HOSTNAME,
+    GOOGLE_SESSION,
+} = require('../config/index.js');
 const AppError = require('../util/error/AppError');
 const passport = require('passport');
 const { authRoutes } = require('../api/routes');
+const googleRoutes = require('../api/auth/routes/google.router');
+const session = require('express-session');
 
 const create = async (app) => {
     app.use(helmet());
@@ -19,7 +25,6 @@ const create = async (app) => {
         }),
     );
     app.use(bodyParser.urlencoded({ extended: true }));
-
     app.use(
         rateLimit({
             windowMs: 1 * 60 * 1000,
@@ -30,55 +35,37 @@ const create = async (app) => {
     );
     app.use(cookieParser());
 
+    app.use(
+        session({
+            secret: GOOGLE_SESSION,
+            resave: false,
+            saveUninitialized: true,
+        }),
+    );
     app.use(passport.initialize());
     app.use(passport.session());
 
-    require('../api/auth/passport.auth');
+    const corsOptions = {
+        origin: 'http://localhost:3000',
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        credentials: true,
+        preflightContinue: false,
+        optionsSuccessStatus: 204,
+        allowedHeaders: [
+            'Content-Type',
+            'Authorization',
+            'Access-Control-Allow-Headers',
+        ],
+    };
 
-    app.get('/', (req, res) => {
-        res.send('<a href="/auth/google">Authenticate with Google </a>');
-    });
-
-    app.get(
-        '/auth/google',
-        passport.authenticate('google', { scope: ['email', 'profile'] }),
-    );
-
-    app.get(
-        '/google/callback',
-        passport.authenticate('google', {
-            successRedirect: '/protected',
-            failureRedirect: '/auth/failure',
-        }),
-    );
-
-    app.get('/auth/failure', (req, res) => {
-        res.send('Failed');
-    });
-
-    app.get('/protected', (req, res) => {
-        res.send('Hello');
-    });
-
-    // const corsOptions = {
-    //     origin: 'http://localhost:3000',
-    //     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    //     credentials: true,
-    //     preflightContinue: false,
-    //     optionsSuccessStatus: 204,
-    //     allowedHeaders: [
-    //         'Content-Type',
-    //         'Authorization',
-    //         'Access-Control-Allow-Headers',
-    //     ],
-    // };
-
-    // app.use(cors(corsOptions));
+    app.use(cors(corsOptions));
 
     if (NODE_ENV === 'development') {
         app.use(morgan('dev'));
     }
+
     app.use('/api/v1/auth', authRoutes);
+    app.use('/api/v1', googleRoutes);
 
     app.all('*', (req, res, next) => {
         next(
