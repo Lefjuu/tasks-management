@@ -12,7 +12,7 @@ module.exports = class Email {
     constructor(user, url) {
         // this.to = user.email;
         this.to = 'karol.legut121@gmail.com';
-        this.firstName = user.name.split(' ')[0];
+        // this.username = user.name.split(' ')[0];
         this.url = url;
         this.from = `Lefju <${EMAIL_FROM}>`;
     }
@@ -55,7 +55,7 @@ module.exports = class Email {
     async sendVerificationToken() {
         await this.send(
             'welcome',
-            'Welcome to the Company App!',
+            'Welcome to the Task Management App!',
             `<!DOCTYPE html>
                 <html>
                 <head>
@@ -134,7 +134,7 @@ module.exports = class Email {
                         </div>
                         <p>If you didn't request a password reset, you can safely ignore this email.</p>
                         <p>Best regards,</p>
-                        <p>Management App</p>
+                        <p>Task Management App</p>
                     </div>
                 </body>
                 </html>

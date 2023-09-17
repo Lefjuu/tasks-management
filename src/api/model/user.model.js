@@ -88,8 +88,10 @@ const User = sequelize.define(
                         .createHash('sha256')
                         .update(activationToken)
                         .digest('hex');
-                    user.verifyTokenExpires = new Date(
-                        Date.now() + 10 * 60 * 1000,
+
+                    const expirationTime = new Date();
+                    user.verifyTokenExpires.setDate(
+                        expirationTime.getDate() + 1,
                     );
                 } else {
                     user.active = true;

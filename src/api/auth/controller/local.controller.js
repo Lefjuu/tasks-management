@@ -31,7 +31,7 @@ exports.signup = catchError(async (req, res, next) => {
             new AppError('Please provide email, name and password!', 400),
         );
     }
-    const url = `${req.protocol}://${req.get('host')}/api/v1/verify/`;
+    const url = `${req.protocol}://${req.get('host')}/api/v1/auth/verify/`;
     const data = await localService.signup(req.body, url);
     if (data instanceof AppError) {
         return next(data);
@@ -125,7 +125,9 @@ exports.forgotPassword = catchError(async (req, res, next) => {
     if (!req.body.email) {
         return next(new AppError('Please provide email!', 400));
     }
-    const url = `${req.protocol}://${req.get('host')}/api/v1/reset-password/`;
+    const url = `${req.protocol}://${req.get(
+        'host',
+    )}/api/v1/auth/reset-password/`;
     const data = await localService.forgotPassword(req.body.email, url);
     if (data instanceof AppError) {
         return next(data);
@@ -176,7 +178,7 @@ exports.restrictTo = (...roles) => {
 
 exports.sendVerifyEmail = catchError(async (req, res, next) => {
     const { email } = req.body;
-    const url = `${req.protocol}://${req.get('host')}/api/v1/verify/`;
+    const url = `${req.protocol}://${req.get('host')}/api/v1/auth/verify/`;
     if (!email) {
         return next(new AppError('Please provide email!', 400));
     }

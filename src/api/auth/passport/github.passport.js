@@ -1,5 +1,5 @@
 const passport = require('passport');
-const GitHubStrategy = require('passport-github').Strategy; // Import the Strategy from passport-github
+const GitHubStrategy = require('passport-github').Strategy;
 const {
     GITHUB_CLIENT_ID,
     GITHUB_CLIENT_SECRET,

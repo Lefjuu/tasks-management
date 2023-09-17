@@ -5,8 +5,11 @@ const crypto = require('crypto');
 
 exports.login = async (login, password) => {
     const user = await User.findOne({
-        username: login,
-    }).select('+password');
+        where: {
+            username: login,
+        },
+        attributes: { exclude: ['password'] },
+    });
 
     if (!user || !(await user.correctPassword(password, user.password))) {
         return new AppError('Incorrect login or password', 401);
@@ -35,21 +38,6 @@ exports.signup = async (newUser, url) => {
     }
 };
 
-exports.googleAuth = async (newUser) => {
-    const exists = await User.exists({
-        email: newUser.email,
-    });
-    if (exists) {
-        return new AppError(`${newUser.email} is already registered`, 400);
-    } else {
-        const user = await User.create(newUser);
-
-        const { password, __v, active, ...userWithoutPassword } = user;
-
-        return userWithoutPassword;
-    }
-};
-
 exports.me = async (userId) => {
     const user = await User.findById(userId);
 
@@ -58,14 +46,25 @@ exports.me = async (userId) => {
 
 exports.verify = async (token) => {
     const user = await User.findOne({
-        verifyToken: token,
+        where: {
+            verifyToken: token,
+        },
     });
 
     if (!user || user.verifyTokenExpires < new Date()) {
         return new AppError(`Token expired`, 400);
     }
 
-    await User.findOneAndUpdate(user._id, { active: true });
+    await User.update(
+        { active: true },
+        {
+            where: {
+                id: user.id,
+            },
+        },
+    );
+
+    return user;
 };
 
 exports.forgotPassword = async (email, url) => {
@@ -113,12 +112,23 @@ exports.resetPassword = async (token, password, confirmPassword) => {
 };
 
 exports.sendVerifyEmail = async (email, url) => {
-    const user = await User.findOne({ email });
+    let user = await User.findOne({ email });
     if (!user) {
         return new AppError('There is no user with this email address.', 400);
     }
+    const activationToken = crypto.randomBytes(32).toString('hex');
+    const expirationTime = new Date();
+    expirationTime.setDate(expirationTime.getDate() + 1);
+    const verifyToken = crypto
+        .createHash('sha256')
+        .update(activationToken)
+        .digest('hex');
+    await User.update(
+        { verifyTokenExpires: expirationTime, verifyToken },
+        { where: { email } },
+    );
 
-    const urlWithToken = url + user.verifyToken;
+    const urlWithToken = url + verifyToken;
 
     await new Email(user, urlWithToken).sendVerificationToken();
     return true;
