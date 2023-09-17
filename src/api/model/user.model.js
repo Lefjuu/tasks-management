@@ -2,13 +2,14 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../../lib/postgres.lib');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
+const AppError = require('../../util/error/AppError');
 
 const User = sequelize.define(
     'users',
     {
         email: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
             unique: true,
         },
         username: {
@@ -96,7 +97,6 @@ const User = sequelize.define(
                 user.password = await bcrypt.hash(user.password, 12);
             },
             beforeUpdate(user) {
-                // Existing beforeUpdate hook
                 if (user.changed('password')) {
                     user.passwordChangedAt = new Date() - 1000;
                 }
@@ -105,12 +105,10 @@ const User = sequelize.define(
     },
 );
 
-// Prototype method for password comparison
 User.prototype.correctPassword = async function (candidatePassword) {
     return await bcrypt.compare(candidatePassword, this.password);
 };
 
-// Prototype method for checking password change
 User.prototype.changedPasswordAfter = function (JWTTimestamp) {
     if (this.passwordChangedAt) {
         const changedTimestamp = parseInt(
@@ -123,7 +121,6 @@ User.prototype.changedPasswordAfter = function (JWTTimestamp) {
     return false;
 };
 
-// Prototype method for creating a password reset token
 User.prototype.createPasswordResetToken = function () {
     const resetToken = crypto.randomBytes(32).toString('hex');
     this.passwordResetToken = crypto
@@ -136,7 +133,6 @@ User.prototype.createPasswordResetToken = function () {
 
 User.prototype.loginByLocal = async function (username, password) {
     try {
-        console.log('now here');
         const user = await User.findOne({
             where: {
                 username: username,
@@ -163,9 +159,8 @@ User.prototype.loginByLocal = async function (username, password) {
 };
 
 User.prototype.loginBySocial = async function (provider, profile) {
+    console.log(profile);
     try {
-        console.log('and now here');
-        console.log(profile);
         let user = await User.findOne({
             where: {
                 provider,
@@ -173,18 +168,32 @@ User.prototype.loginBySocial = async function (provider, profile) {
             },
         });
 
+        // // if (provider === 'facebook') {
+        // const emailExists = await User.findOne({
+        //     where: { email: profile.email },
+        // });
+
+        // if (emailExists) {
+        //     throw new AppError('Email address is already in use.', 400);
+        // }
+        // // }
+
         if (!user) {
             user = await User.create({
                 provider: provider,
                 name: profile.displayName,
-                username: profile.username,
-                email: profile.email || '',
+                email: profile.email || null,
                 socialId: profile.id,
                 password: 'social_login_password',
             });
         }
 
-        return await user.save();
+        user = await user.save();
+        // console.log(user);
+        // if (user instanceof AppError) {
+        //     throw new AppError('Email address is already in use.', 400);
+        // }
+        return user;
     } catch (error) {
         throw error;
     }
