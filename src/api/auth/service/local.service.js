@@ -8,7 +8,6 @@ exports.login = async (login, password) => {
         where: {
             username: login,
         },
-        attributes: { exclude: ['password'] },
     });
 
     if (!user || !(await user.correctPassword(password, user.password))) {
