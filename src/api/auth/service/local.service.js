@@ -1,10 +1,10 @@
-const AppError = require('../../util/error/AppError');
-const Email = require('../../util/email.js');
-const { UserModel } = require('../model');
+const AppError = require('../../../util/error/AppError');
+const Email = require('../../../util/email.js');
+const { User } = require('../../model');
 const crypto = require('crypto');
 
 exports.login = async (login, password) => {
-    const user = await UserModel.findOne({
+    const user = await User.findOne({
         username: login,
     }).select('+password');
 
@@ -18,48 +18,46 @@ exports.login = async (login, password) => {
 };
 
 exports.signup = async (newUser, url) => {
-    const exists = await UserModel.exists({
-        email: newUser.email,
+    const exists = await User.findOne({
+        where: { email: newUser.email },
     });
     if (exists) {
         return new AppError(`${newUser.email} is already registered`, 400);
     } else {
-        const user = await UserModel.create(newUser);
+        const user = await User.create(newUser);
 
         const urlWithToken = url + user.verifyToken;
 
         await new Email(newUser, urlWithToken).sendVerificationToken();
-        const { password, __v, active, ...userWithoutPassword } =
-            user.toObject();
+        const { password, __v, active, ...userWithoutPassword } = user;
 
         return userWithoutPassword;
     }
 };
 
 exports.googleAuth = async (newUser) => {
-    const exists = await UserModel.exists({
+    const exists = await User.exists({
         email: newUser.email,
     });
     if (exists) {
         return new AppError(`${newUser.email} is already registered`, 400);
     } else {
-        const user = await UserModel.create(newUser);
+        const user = await User.create(newUser);
 
-        const { password, __v, active, ...userWithoutPassword } =
-            user.toObject();
+        const { password, __v, active, ...userWithoutPassword } = user;
 
         return userWithoutPassword;
     }
 };
 
 exports.me = async (userId) => {
-    const user = await UserModel.findById(userId);
+    const user = await User.findById(userId);
 
     return user;
 };
 
 exports.verify = async (token) => {
-    const user = await UserModel.findOne({
+    const user = await User.findOne({
         verifyToken: token,
     });
 
@@ -71,7 +69,7 @@ exports.verify = async (token) => {
 };
 
 exports.forgotPassword = async (email, url) => {
-    const user = await UserModel.findOne({ email });
+    const user = await User.findOne({ email });
     if (!user) {
         return new AppError('There is no user with this email address.', 400);
     }
@@ -98,7 +96,7 @@ exports.forgotPassword = async (email, url) => {
 exports.resetPassword = async (token, password, confirmPassword) => {
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
-    const user = await UserModel.findOne({
+    const user = await User.findOne({
         passwordResetToken: hashedToken,
         passwordResetExpires: { $gt: Date.now() },
     });
@@ -115,7 +113,7 @@ exports.resetPassword = async (token, password, confirmPassword) => {
 };
 
 exports.sendVerifyEmail = async (email, url) => {
-    const user = await UserModel.findOne({ email });
+    const user = await User.findOne({ email });
     if (!user) {
         return new AppError('There is no user with this email address.', 400);
     }

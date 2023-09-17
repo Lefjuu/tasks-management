@@ -15,6 +15,9 @@ const passport = require('passport');
 const { authRoutes } = require('../api/routes');
 const googleRoutes = require('../api/auth/routes/google.router');
 const session = require('express-session');
+const { localRouter } = require('../api/auth/routes');
+
+require('../api/auth/passport/index');
 
 const create = async (app) => {
     app.use(helmet());
@@ -64,8 +67,9 @@ const create = async (app) => {
         app.use(morgan('dev'));
     }
 
-    app.use('/api/v1/auth', authRoutes);
-    app.use('/api/v1', googleRoutes);
+    // app.use('/api/v1/auth', authRoutes);
+    app.use('/api/v1/auth', googleRoutes);
+    app.use('/api/v1/auth', localRouter);
 
     app.all('*', (req, res, next) => {
         next(

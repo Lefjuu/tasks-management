@@ -1,7 +1,7 @@
-const { AuthService, UserService } = require('../service');
-const catchError = require('../../util/error/CatchError');
-const AppError = require('../../util/error/AppError');
-const JwtUtils = require('../../util/jwt');
+const { localService } = require('../service');
+const catchError = require('../../../util/error/CatchError');
+const AppError = require('../../../util/error/AppError');
+const JwtUtils = require('../../../util/jwt');
 
 exports.login = catchError(async (req, res, next) => {
     const { login, password } = req.body;
@@ -10,7 +10,7 @@ exports.login = catchError(async (req, res, next) => {
         return next(new AppError('Please provide login and password!', 400));
     }
 
-    const data = await AuthService.login(login, password);
+    const data = await localService.login(login, password);
     if (data instanceof AppError) {
         return next(data);
     }
@@ -24,13 +24,15 @@ exports.login = catchError(async (req, res, next) => {
 });
 
 exports.signup = catchError(async (req, res, next) => {
-    const { email, password } = req.body;
+    const { email, name, password } = req.body;
 
-    if (!email || !password) {
-        return next(new AppError('Please provide email and password!', 400));
+    if (!email || !name || !password) {
+        return next(
+            new AppError('Please provide email, name and password!', 400),
+        );
     }
     const url = `${req.protocol}://${req.get('host')}/api/v1/verify/`;
-    const data = await AuthService.signup(req.body, url);
+    const data = await localService.signup(req.body, url);
     if (data instanceof AppError) {
         return next(data);
     }
@@ -38,27 +40,6 @@ exports.signup = catchError(async (req, res, next) => {
     res.status(201).json({
         status: 'success',
         message: 'verification account email sent',
-        data: {
-            user: data,
-        },
-    });
-});
-
-exports.authGoogle = catchError(async (req, res, next) => {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-        return next(new AppError('Please provide email and password!', 400));
-    }
-
-    const data = await AuthService.googleAuth(req.body);
-    if (data instanceof AppError) {
-        return next(data);
-    }
-
-    res.status(201).json({
-        status: 'success',
-        message: 'User registration successful',
         data: {
             user: data,
         },
@@ -104,7 +85,7 @@ exports.protect = catchError(async (req, res, next) => {
 });
 
 exports.verify = catchError(async (req, res, next) => {
-    const data = await AuthService.verify(req.params.token);
+    const data = await localService.verify(req.params.token);
     if (data instanceof AppError) {
         return next(data);
     }
@@ -145,7 +126,7 @@ exports.forgotPassword = catchError(async (req, res, next) => {
         return next(new AppError('Please provide email!', 400));
     }
     const url = `${req.protocol}://${req.get('host')}/api/v1/reset-password/`;
-    const data = await AuthService.forgotPassword(req.body.email, url);
+    const data = await localService.forgotPassword(req.body.email, url);
     if (data instanceof AppError) {
         return next(data);
     }
@@ -162,7 +143,7 @@ exports.resetPassword = catchError(async (req, res, next) => {
             new AppError('Please provide password and confirm password!', 400),
         );
     }
-    const data = await AuthService.resetPassword(
+    const data = await localService.resetPassword(
         req.params.token,
         password,
         confirmPassword,
@@ -199,7 +180,7 @@ exports.sendVerifyEmail = catchError(async (req, res, next) => {
     if (!email) {
         return next(new AppError('Please provide email!', 400));
     }
-    const data = await AuthService.sendVerifyEmail(email, url);
+    const data = await localService.sendVerifyEmail(email, url);
     if (data instanceof AppError) {
         return next(data);
     }

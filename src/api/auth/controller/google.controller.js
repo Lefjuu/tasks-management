@@ -1,6 +1,5 @@
 const passport = require('passport');
 const { initialize } = require('../service/session.service');
-require('../passport/google.passport');
 
 exports.index = function (req, res, next) {
     passport.authenticate('google')(req, res, next);

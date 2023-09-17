@@ -1,5 +1,5 @@
-const authController = require('./auth.controller');
+// const authController = require('../auth/controller/local.controller');
 
-module.exports = {
-    authController,
-};
+// module.exports = {
+//     authController,
+// };

@@ -1,9 +1,9 @@
 const express = require('express');
-const controller = require('./../controller/google.controller');
+const { googleController } = require('../controller');
 
 const router = express.Router();
 
-router.get('/auth/google', controller.index);
-router.get('/auth/google/callback', controller.callback);
+router.get('/google', googleController.index);
+router.get('/google/callback', googleController.callback);
 
 module.exports = router;
