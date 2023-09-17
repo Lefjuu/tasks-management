@@ -25,8 +25,8 @@ exports.generateResponseWithTokensAndUser = async (
     res,
     message,
 ) => {
-    const accessToken = await generateAccessToken(user._id);
-    const refreshToken = await generateRefreshToken(user._id);
+    const accessToken = await generateAccessToken(user.id);
+    const refreshToken = await generateRefreshToken(user.id);
 
     const secure = req
         ? req.secure || req.headers['x-forwarded-proto'] === 'https'
@@ -57,8 +57,8 @@ exports.generateResponseWithTokensAndUser = async (
 };
 
 exports.generateResponseWithTokens = async (user, statusCode, req, res) => {
-    const accessToken = await generateAccessToken(user._id);
-    const refreshToken = await generateRefreshToken(user._id);
+    const accessToken = await generateAccessToken(user.id);
+    const refreshToken = await generateRefreshToken(user.id);
 
     res.cookie('access_token', accessToken, {
         httpOnly: true,
