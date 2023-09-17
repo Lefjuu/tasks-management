@@ -28,6 +28,11 @@ exports.GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 exports.GOOGLE_SESSION = process.env.GOOGLE_SESSION;
 exports.GOOGLE_CALLBACK = process.env.GOOGLE_CALLBACK;
 
+exports.GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+exports.GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+// exports.GITHUB_SESSION = process.env.GITHUB_SESSION;
+exports.GITHUB_CALLBACK = process.env.GITHUB_CALLBACK;
+
 exports.REDIS_HOSTNAME = process.env.REDIS_HOSTNAME;
 exports.REDIS_PORT = process.env.REDIS_PORT;
 exports.REDIS_EXPIRES_IN = process.env.REDIS_EXPIRES_IN;

@@ -12,10 +12,12 @@ const {
 } = require('../config/index.js');
 const AppError = require('../util/error/AppError');
 const passport = require('passport');
-const { authRoutes } = require('../api/routes');
-const googleRoutes = require('../api/auth/routes/google.router');
 const session = require('express-session');
-const { localRouter } = require('../api/auth/routes');
+const {
+    localRouter,
+    googleRouter,
+    githubRouter,
+} = require('../api/auth/routes');
 
 require('../api/auth/passport/index');
 
@@ -68,8 +70,9 @@ const create = async (app) => {
     }
 
     // app.use('/api/v1/auth', authRoutes);
-    app.use('/api/v1/auth', googleRoutes);
     app.use('/api/v1/auth', localRouter);
+    app.use('/api/v1/auth', googleRouter);
+    app.use('/api/v1/auth', githubRouter);
 
     app.all('*', (req, res, next) => {
         next(
