@@ -10,7 +10,9 @@ exports.initialize = async function (err, user, res) {
             new AppError('User not found', 400);
         }
 
-        user._id = user.id;
+        if (user.id) {
+            user._id = user.id;
+        }
 
         // for now idea like this, in future accessToken in cookies and redirect in frontend
         JwtUtils.generateResponseWithTokensAndUser(user, 200, null, res);

@@ -17,6 +17,7 @@ const {
     localRouter,
     googleRouter,
     githubRouter,
+    facebookRouter,
 } = require('../api/auth/routes');
 
 require('../api/auth/passport/index');
@@ -73,6 +74,7 @@ const create = async (app) => {
     app.use('/api/v1/auth', localRouter);
     app.use('/api/v1/auth', googleRouter);
     app.use('/api/v1/auth', githubRouter);
+    app.use('/api/v1/auth', facebookRouter);
 
     app.all('*', (req, res, next) => {
         next(
