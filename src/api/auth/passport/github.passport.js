@@ -28,5 +28,3 @@ passport.use(
         },
     ),
 );
-
-module.exports = passport;
