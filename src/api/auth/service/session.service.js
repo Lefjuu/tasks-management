@@ -4,15 +4,16 @@ const JwtUtils = require('../../../util/jwt');
 exports.initialize = async function (err, user, res) {
     try {
         if (err) {
-            new AppError(err);
+            console.log(err);
+            throw new AppError(err);
         }
         if (!user) {
             new AppError('User not found', 400);
         }
 
-        if (user.id) {
-            user._id = user.id;
-        }
+        // if (user.id) {
+        //     user._id = user.id;
+        // }
 
         // for now idea like this, in future accessToken in cookies and redirect in frontend
         JwtUtils.generateResponseWithTokensAndUser(user, 200, null, res);
