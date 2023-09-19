@@ -62,6 +62,7 @@ const sequelize = new Sequelize(
 
 const db = async () => {
     try {
+        require('../api/model/association.model.js');
         await sequelize.authenticate();
         console.log('✔️  Connection has been established successfully.');
     } catch (error) {

@@ -3,6 +3,7 @@ const { sequelize } = require('../../lib/postgres.lib');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const AppError = require('../../util/error/AppError');
+const Timetable = require('./timetable.model');
 
 const User = sequelize.define(
     'users',
@@ -36,6 +37,13 @@ const User = sequelize.define(
         socialId: {
             type: DataTypes.STRING,
         },
+        // timetablesIds: {
+        //     type: DataTypes.ARRAY(DataTypes.INTEGER),
+        //     references: {
+        //         model: Timetable,
+        //         key: 'timetableId',
+        //     },
+        // },
         passwordChangedAt: DataTypes.DATE,
         passwordResetToken: DataTypes.STRING,
         passwordResetExpires: DataTypes.DATE,
@@ -90,9 +98,8 @@ const User = sequelize.define(
                         .digest('hex');
 
                     const expirationTime = new Date();
-                    user.verifyTokenExpires.setDate(
-                        expirationTime.getDate() + 1,
-                    );
+                    expirationTime.setDate(expirationTime.getDate() + 1);
+                    user.verifyTokenExpires = expirationTime;
                 } else {
                     user.active = true;
                 }
