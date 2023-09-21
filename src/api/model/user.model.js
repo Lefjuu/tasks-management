@@ -3,7 +3,7 @@ const { sequelize } = require('../../lib/postgres.lib');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const AppError = require('../../util/error/AppError');
-const Timetable = require('./timetable.model');
+const list = require('./list.model');
 
 const User = sequelize.define(
     'users',
@@ -37,11 +37,11 @@ const User = sequelize.define(
         socialId: {
             type: DataTypes.STRING,
         },
-        // timetablesIds: {
+        // listsIds: {
         //     type: DataTypes.ARRAY(DataTypes.INTEGER),
         //     references: {
-        //         model: Timetable,
-        //         key: 'timetableId',
+        //         model: list,
+        //         key: 'listId',
         //     },
         // },
         passwordChangedAt: DataTypes.DATE,

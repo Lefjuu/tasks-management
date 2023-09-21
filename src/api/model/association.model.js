@@ -1,11 +1,11 @@
-const Timetable = require('./timetable.model');
+const list = require('./list.model');
 const User = require('./user.model');
 
-User.hasMany(Timetable, {
-    as: 'timetables',
+User.hasMany(list, {
+    as: 'lists',
 });
 
-Timetable.belongsTo(User, {
+list.belongsTo(User, {
     foreignKey: 'userId',
     as: 'users',
 });

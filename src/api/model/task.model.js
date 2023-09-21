@@ -1,6 +1,6 @@
 // const { DataTypes } = require('sequelize');
 // const { sequelize } = require('../../lib/postgres.lib');
-// const Timetable = require('./timetable.model');
+// const list = require('./list.model');
 // const User = require('./user.model');
 
 // const Task = sequelize.define('tasks', {
@@ -16,7 +16,7 @@
 //         type: DataTypes.BOOLEAN,
 //         defaultValue: false,
 //     },
-//     // timetableId: {
+//     // listId: {
 //     //     type: DataTypes.STRING,
 //     //     allowNull: true,
 //     //     unique: true,
@@ -28,7 +28,7 @@
 //     // },
 // });
 
-// // Task.belongsTo(Timetable, { foreignKey: 'timetableId' });
+// // Task.belongsTo(list, { foreignKey: 'listId' });
 // // Task.belongsTo(User, { foreignKey: 'userId' });
 
 // module.exports = Task;

@@ -3,7 +3,7 @@ const { sequelize } = require('../../lib/postgres.lib');
 const User = require('./user.model');
 const Task = require('./task.model');
 
-const Timetable = sequelize.define('timetables', {
+const list = sequelize.define('lists', {
     name: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -39,4 +39,4 @@ const Timetable = sequelize.define('timetables', {
     // },
 });
 
-module.exports = Timetable;
+module.exports = list;
