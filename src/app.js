@@ -1,7 +1,7 @@
 const express = require('express');
 const { create } = require('./lib/express.lib');
 const { db } = require('./lib/postgres.lib.js');
-const { User } = require('./api/model');
+const { User, Task, List } = require('./api/model');
 const app = express();
 
 const init = async () => {
@@ -11,8 +11,11 @@ const init = async () => {
     // postgresql
     await db();
 
+    // temporary
     (async () => {
         await User.sync();
+        await List.sync();
+        await Task.sync();
     })();
 };
 
