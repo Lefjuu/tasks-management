@@ -1,11 +1,30 @@
-const list = require('./list.model');
+const List = require('./list.model');
+const Task = require('./task.model');
 const User = require('./user.model');
 
-User.hasMany(list, {
+User.hasMany(List, {
+    foreignKey: 'userId',
     as: 'lists',
 });
 
-list.belongsTo(User, {
+List.belongsTo(User, {
     foreignKey: 'userId',
-    as: 'users',
+    as: 'user',
 });
+
+List.hasMany(Task, {
+    foreignKey: 'listId',
+    as: 'tasks',
+});
+
+List.belongsToMany(Task, { through: 'ListTask' });
+
+Task.belongsTo(List, {
+    foreignKey: 'listId',
+    as: 'list',
+});
+
+// Task.belongsTo(User, {
+//     foreignKey: 'userId',
+//     as: 'list',
+// });
