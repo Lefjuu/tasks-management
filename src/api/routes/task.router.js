@@ -1,6 +1,10 @@
 const express = require('express');
-const listController = require('../controller');
+const { taskController } = require('../controller');
+const { localController } = require('../auth/controller');
 
 const router = express.Router();
 
-router.get('/list/today');
+router.get('/:id', localController.protect, taskController.getTask);
+router.post('/', localController.protect, taskController.createTask);
+
+module.exports = router;

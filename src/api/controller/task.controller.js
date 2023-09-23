@@ -1,0 +1,45 @@
+const AppError = require('../../util/error/AppError');
+const CatchError = require('../../util/error/CatchError');
+const { taskService } = require('../service');
+
+exports.getTask = CatchError(async (req, res, next) => {
+    const { id } = req.params;
+    if (!id) {
+        return next(new AppError('Please provide taskId!', 400));
+    }
+    let task;
+    if (req.user.role === 'admin') {
+        task = await taskService.getTask(req.user.id);
+        if (task instanceof AppError) {
+            return next(task);
+        }
+    } else {
+        task = await taskService.getTask(req.user.id);
+        if (task instanceof AppError) {
+            return next(task);
+        }
+        if (task.userId !== req.user.id && req.user.role !== 'admin') {
+            return next(new AppError('You have no access', 403));
+        }
+    }
+    res.status(200).json({
+        status: 'success',
+        data: {
+            data: task,
+        },
+    });
+});
+
+exports.createTask = CatchError(async (req, res, next) => {
+    if (!req.body.name) {
+        return next(new AppError('Please provide name!', 400));
+    }
+    const task = await taskService.createTask(req.body);
+
+    res.status(201).json({
+        status: 'success',
+        data: {
+            data: task,
+        },
+    });
+});
