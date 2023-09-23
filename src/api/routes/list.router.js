@@ -4,7 +4,7 @@ const { localController } = require('../auth/controller');
 
 const router = express.Router();
 
-router.get('/today', localController.protect, listController.getTodaylist);
-router.get('/:param', localController.protect, listController.getlist);
+router.get('/today', localController.protect, listController.getTodayList);
+router.get('/:param', localController.protect, listController.getList);
 
 module.exports = router;

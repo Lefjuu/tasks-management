@@ -1,33 +1,29 @@
-const list = require('../model/list.model');
+const AppError = require('../../util/error/AppError');
+const List = require('../model/list.model');
 
-exports.getlist = async (param, userId) => {
+exports.getList = async (param, userId) => {
     if (isDateFormat(param)) {
-        const existinglist = await list.findOne({
+        const existingList = await List.findOne({
             where: {
                 currentDate: param,
             },
         });
 
-        if (existinglist) {
-            return existinglist;
-        }
-    } else if (isMongoObjectId(param)) {
-        const existinglist = await list.findByPk(param);
-
-        if (existinglist) {
-            return existinglist;
+        if (existingList) {
+            return existingList;
         }
     }
 
-    const newlist = await list.create({
+    const newList = await List.create({
         userId,
         currentDate: param,
     });
 
-    return newlist;
+    return newList;
 };
 
-exports.getTodaylist = async (userId) => {
+exports.getTodayList = async (userId) => {
+    console.log(userId);
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     const formattedDate = `${currentDate
@@ -37,20 +33,32 @@ exports.getTodaylist = async (userId) => {
         .toString()
         .padStart(2, '0')}-${currentYear}`;
 
-    const existinglist = await list.findOne({
+    const existingList = await List.findOne({
         where: {
             userId: userId,
-            currentDate: formattedDate,
+            name: formattedDate,
         },
     });
 
-    if (!existinglist) {
-        const createdlist = await list.create({
+    if (!existingList) {
+        const createdList = await List.create({
             userId,
-            currentDate: formattedDate,
+            name: formattedDate,
         });
-        console.log('Created list:', createdlist);
-        return createdlist;
+        return createdList;
     }
-    return existinglist;
+    return existingList;
+};
+
+exports.addTaskToList = async (listId, taskId) => {
+    const list = await List.findByPk(listId);
+
+    if (!list) {
+        throw new AppError('List not found', 400);
+    }
+    list.tasks = [...list.tasks, taskId];
+
+    await list.save();
+
+    return list;
 };

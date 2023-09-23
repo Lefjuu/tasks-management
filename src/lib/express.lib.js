@@ -19,7 +19,7 @@ const {
     githubRouter,
     facebookRouter,
 } = require('../api/auth/routes');
-const { userRouter, listRouter } = require('../api/routes');
+const { userRouter, listRouter, taskRouter } = require('../api/routes');
 
 require('../api/auth/passport/index');
 
@@ -78,6 +78,7 @@ const create = async (app) => {
     app.use('/api/v1/auth', facebookRouter);
     app.use('/api/v1/users', userRouter);
     app.use('/api/v1/list', listRouter);
+    app.use('/api/v1/task', taskRouter);
 
     app.all('*', (req, res, next) => {
         next(
