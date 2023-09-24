@@ -14,17 +14,15 @@ List.belongsTo(User, {
 
 List.hasMany(Task, {
     foreignKey: 'listId',
-    as: 'tasks',
+    as: 'taskList',
 });
-
-List.belongsToMany(Task, { through: 'ListTask' });
 
 Task.belongsTo(List, {
     foreignKey: 'listId',
     as: 'list',
 });
 
-// Task.belongsTo(User, {
-//     foreignKey: 'userId',
-//     as: 'list',
-// });
+Task.belongsTo(User, {
+    foreignKey: 'userId',
+    as: 'taskUser',
+});

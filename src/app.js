@@ -13,6 +13,7 @@ const init = async () => {
 
     // temporary
     (async () => {
+        await require('./api/model/association.model');
         await User.sync();
         await List.sync();
         await Task.sync();

@@ -38,10 +38,7 @@ exports.getTodayList = CatchError(async (req, res, next) => {
     if (list instanceof AppError) {
         return next(list);
     }
-    if (
-        list.userId.toString() !== req.user.id.toString() &&
-        req.user.role !== 'admin'
-    ) {
+    if (list.userId !== req.user.id && req.user.role !== 'admin') {
         return next(new AppError('You have no access', 403));
     }
     res.status(200).json({

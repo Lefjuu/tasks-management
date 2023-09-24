@@ -9,6 +9,9 @@ exports.getTask = async (taskId) => {
 exports.createTask = async (task) => {
     const createdTask = await Task.create({ ...task });
 
+    console.log(createdTask);
+    console.log(createdTask.listId, createdTask.id);
+
     const adding = await listService.addTaskToList(
         createdTask.listId,
         createdTask.id,

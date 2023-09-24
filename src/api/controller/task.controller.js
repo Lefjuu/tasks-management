@@ -9,15 +9,16 @@ exports.getTask = CatchError(async (req, res, next) => {
     }
     let task;
     if (req.user.role === 'admin') {
-        task = await taskService.getTask(req.user.id);
+        task = await taskService.getTask(id);
         if (task instanceof AppError) {
             return next(task);
         }
     } else {
-        task = await taskService.getTask(req.user.id);
+        task = await taskService.getTask(id);
         if (task instanceof AppError) {
             return next(task);
         }
+        console.log(task);
         if (task.userId !== req.user.id && req.user.role !== 'admin') {
             return next(new AppError('You have no access', 403));
         }
