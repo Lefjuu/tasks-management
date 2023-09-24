@@ -20,3 +20,62 @@ exports.createTask = async (task, role) => {
 
     return createdTask;
 };
+
+exports.updateTask = async (id, body, user) => {
+    try {
+        const task = await Task.findByPk(id);
+
+        if (!task) {
+            throw new AppError('Task not found', 400);
+        }
+
+        let updatedTask;
+        if (user.role === 'admin' || task.userId === user.id) {
+            updatedTask = await task.update(body, {
+                where: { id: task.id },
+                returning: true,
+                plain: true,
+            });
+        } else {
+            updatedTask = await task.update(
+                {
+                    ended: body.ended,
+                    description: body.description,
+                },
+                {
+                    where: { id: task.id },
+                    returning: true,
+                    plain: true,
+                },
+            );
+        }
+
+        return updatedTask;
+    } catch (error) {
+        throw error;
+    }
+};
+
+exports.deleteTask = async (id, user) => {
+    try {
+        const task = await Task.findByPk(id);
+
+        if (!task) {
+            return false;
+        }
+        let isDeleted;
+        if (user.role === 'admin' || task.userId === user.id) {
+            isDeleted = await Task.destroy({
+                where: { id: task.id },
+            });
+        }
+
+        if (isDeleted === 0) {
+            return false;
+        }
+
+        return true;
+    } catch (error) {
+        throw error;
+    }
+};

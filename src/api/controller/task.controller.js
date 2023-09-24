@@ -44,3 +44,49 @@ exports.createTask = CatchError(async (req, res, next) => {
         },
     });
 });
+
+exports.updateTask = CatchError(async (req, res, next) => {
+    const { id } = req.params;
+    if (!id) {
+        return next(new AppError('Please provide id!', 400));
+    }
+    const task = await taskService.getTask(id);
+    if (!task) {
+        return next(new AppError('Task not found!', 400));
+    }
+    console.log(task);
+
+    if (task instanceof AppError) {
+        return next(task);
+    }
+    if (task.userId !== req.user.id && req.user.role !== 'admin') {
+        return next(new AppError('You have no access', 403));
+    }
+    const updatedTask = await taskService.updateTask(id, req.body, req.user);
+
+    res.status(200).json({
+        status: 'success',
+        data: {
+            data: updatedTask,
+        },
+    });
+});
+
+exports.deleteTask = CatchError(async (req, res, next) => {
+    const { id } = req.params;
+    if (!id) {
+        return next(new AppError('Please provide id!', 400));
+    }
+
+    const data = await taskService.deleteTask(id, req.user);
+    if (data instanceof AppError) {
+        return next(data);
+    }
+
+    res.status(200).json({
+        status: 'success',
+        data: {
+            data,
+        },
+    });
+});

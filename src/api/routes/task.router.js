@@ -4,7 +4,13 @@ const { localController } = require('../auth/controller');
 
 const router = express.Router();
 
-router.get('/:id', localController.protect, taskController.getTask);
-router.post('/', localController.protect, taskController.createTask);
+router
+    .route('/:id')
+    .get(localController.protect, taskController.getTask)
+    .patch(localController.protect, taskController.updateTask);
 
+router.use(localController.protect, localController.restrictTo('admin'));
+
+router.post('/', taskController.createTask);
+router.delete('/:id', taskController.deleteTask);
 module.exports = router;
