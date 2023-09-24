@@ -1,29 +1,45 @@
 const AppError = require('../../util/error/AppError');
 const List = require('../model/list.model');
 
-exports.getList = async (param, userId) => {
-    if (isDateFormat(param)) {
-        const existingList = await List.findOne({
+function isDateFormat(input) {
+    const dateRegex = /^\d{2}-\d{2}-\d{4}$/;
+    return dateRegex.test(input);
+}
+
+exports.getList = async (param, userId, employeeId) => {
+    console.log('param:', param);
+    console.log('userId:', userId);
+    console.log('employeeId:', employeeId);
+    let list;
+    if (isDateFormat(param) && employeeId) {
+        list = await List.findOne({
             where: {
-                currentDate: param,
+                userId: employeeId,
+                name: param,
             },
         });
-
-        if (existingList) {
-            return existingList;
-        }
+    } else if (isDateFormat(param)) {
+        list = await List.findOne({
+            where: {
+                name: param,
+                userId: userId,
+            },
+        });
+    } else {
+        throw new AppError('Bad Request', 400);
     }
 
-    const newList = await List.create({
-        userId,
-        currentDate: param,
-    });
+    if (!list) {
+        list = await List.create({
+            userId,
+            name: param,
+        });
+    }
 
-    return newList;
+    return list;
 };
 
 exports.getTodayList = async (userId) => {
-    console.log(userId);
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     const formattedDate = `${currentDate
@@ -61,4 +77,8 @@ exports.addTaskToList = async (listId, taskId) => {
     await list.save();
 
     return list;
+};
+
+exports.findList = async (listId) => {
+    return await List.findByPk(listId);
 };

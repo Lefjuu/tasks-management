@@ -6,16 +6,14 @@ exports.getTask = async (taskId) => {
     return await Task.findByPk(taskId);
 };
 
-exports.createTask = async (task) => {
+exports.createTask = async (task, role) => {
+    const list = await listService.findList(task.listId);
+    if (list.userId !== task.userId && role !== 'admin') {
+        throw new AppError('You have no access', 401);
+    }
     const createdTask = await Task.create({ ...task });
 
-    console.log(createdTask);
-    console.log(createdTask.listId, createdTask.id);
-
-    const adding = await listService.addTaskToList(
-        createdTask.listId,
-        createdTask.id,
-    );
+    const adding = await listService.addTaskToList(task.listId, task.id);
     if (adding instanceof AppError) {
         return next(adding);
     }

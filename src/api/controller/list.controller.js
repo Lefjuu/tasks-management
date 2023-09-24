@@ -9,19 +9,17 @@ exports.getList = CatchError(async (req, res, next) => {
     }
     let list;
     if (req.query.user && req.user.role === 'admin') {
-        list = await listService.getList(param, req.user._id, req.query.user);
+        console.log('here');
+        list = await listService.getList(param, req.user.id, req.query.user);
         if (list instanceof AppError) {
             return next(list);
         }
     } else {
-        list = await listService.getList(param, req.user._id);
+        list = await listService.getList(param, req.user.id);
         if (list instanceof AppError) {
             return next(list);
         }
-        if (
-            list.userId.toString() !== req.user._id.toString() &&
-            req.user.role !== 'admin'
-        ) {
+        if (list.userId !== req.user.id && req.user.role !== 'admin') {
             return next(new AppError('You have no access', 403));
         }
     }
