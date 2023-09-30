@@ -7,10 +7,9 @@ const router = express.Router();
 router
     .route('/:id')
     .get(localController.protect, taskController.getTask)
-    .patch(localController.protect, taskController.updateTask);
+    .patch(localController.protect, taskController.updateTask)
+    .delete(localController.protect, taskController.deleteTask);
 
-router.use(localController.protect, localController.restrictTo('admin'));
+router.post('/', localController.protect, taskController.createTask);
 
-router.post('/', taskController.createTask);
-router.delete('/:id', taskController.deleteTask);
 module.exports = router;
