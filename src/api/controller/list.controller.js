@@ -46,3 +46,19 @@ exports.getTodayList = CatchError(async (req, res, next) => {
         },
     });
 });
+
+exports.getMonthList = CatchError(async (req, res, next) => {
+    const lists = await listService.getMonthList(req.user.id, req.params);
+    if (lists instanceof AppError) {
+        return next(lists);
+    }
+    if (lists.userId !== req.user.id && req.user.role !== 'admin') {
+        return next(new AppError('You have no access', 403));
+    }
+    res.status(200).json({
+        status: 'success',
+        data: {
+            data: lists,
+        },
+    });
+});

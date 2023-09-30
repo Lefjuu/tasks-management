@@ -35,7 +35,7 @@ exports.createTask = CatchError(async (req, res, next) => {
     if (!req.body.name) {
         return next(new AppError('Please provide name!', 400));
     }
-    const task = await taskService.createTask(req.body, user.role);
+    const task = await taskService.createTask(req.body, req.user.role);
 
     res.status(201).json({
         status: 'success',

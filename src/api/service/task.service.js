@@ -13,7 +13,8 @@ exports.createTask = async (task, role) => {
     }
     const createdTask = await Task.create({ ...task });
 
-    const adding = await listService.addTaskToList(task.listId, task.id);
+    console.log(task.listId, task.id);
+    const adding = await listService.addTaskToList(task.listId, createdTask.id);
     if (adding instanceof AppError) {
         return next(adding);
     }
@@ -57,6 +58,7 @@ exports.updateTask = async (id, body, user) => {
 };
 
 exports.deleteTask = async (id, user) => {
+    // TODO: DELETE FROM LIST
     try {
         const task = await Task.findByPk(id);
 
@@ -78,4 +80,16 @@ exports.deleteTask = async (id, user) => {
     } catch (error) {
         throw error;
     }
+};
+
+exports.findTasksForDay = async (userId, listId) => {
+    const tasks = await Task.findAll({
+        where: {
+            userId: userId,
+            listId: listId,
+        },
+        attributes: ['name', 'id'],
+    });
+
+    return tasks;
 };
