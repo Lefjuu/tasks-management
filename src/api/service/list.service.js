@@ -117,11 +117,23 @@ exports.getMonthList = async (userId, params) => {
         }
 
         const tasks = await taskService.findTasksForDay(userId, list.id);
-        console.log(tasks);
         list.tasks = tasks;
 
         lists.push(list);
     }
 
     return lists;
+};
+
+exports.deleteTaskInList = async (listId, taskId) => {
+    const list = await List.findByPk(listId);
+
+    if (!list) {
+        throw new AppError('List not found', 400);
+    }
+    list.tasks = [...list.tasks, taskId];
+
+    await list.save();
+
+    return list;
 };

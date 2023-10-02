@@ -58,7 +58,6 @@ exports.updateTask = async (id, body, user) => {
 };
 
 exports.deleteTask = async (id, user) => {
-    // TODO: DELETE FROM LIST
     try {
         const task = await Task.findByPk(id);
 
@@ -70,6 +69,7 @@ exports.deleteTask = async (id, user) => {
             isDeleted = await Task.destroy({
                 where: { id: task.id },
             });
+            await listService.deleteTaskInList(task.listId, task.id);
         }
 
         if (isDeleted === 0) {
