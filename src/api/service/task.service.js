@@ -1,6 +1,7 @@
 const listService = require('./list.service');
 const AppError = require('../../util/error/AppError');
 const Task = require('../model/task.model');
+const { roleEnum } = require('../model/role.enum');
 
 exports.getTask = async (taskId) => {
     return await Task.findByPk(taskId);
@@ -8,7 +9,7 @@ exports.getTask = async (taskId) => {
 
 exports.createTask = async (task, role) => {
     const list = await listService.findList(task.listId);
-    if (list.userId !== task.userId && role !== 'admin') {
+    if (list.userId !== task.userId && role !== roleEnum.ADMIN) {
         throw new AppError('You have no access', 401);
     }
     const createdTask = await Task.create({ ...task });
@@ -31,7 +32,7 @@ exports.updateTask = async (id, body, user) => {
         }
 
         let updatedTask;
-        if (user.role === 'admin' || task.userId === user.id) {
+        if (user.role === roleEnum.ADMIN || task.userId === user.id) {
             updatedTask = await task.update(body, {
                 where: { id: task.id },
                 returning: true,
@@ -65,7 +66,7 @@ exports.deleteTask = async (id, user) => {
             return false;
         }
         let isDeleted;
-        if (user.role === 'admin' || task.userId === user.id) {
+        if (user.role === roleEnum.ADMIN || task.userId === user.id) {
             isDeleted = await Task.destroy({
                 where: { id: task.id },
             });
@@ -78,6 +79,7 @@ exports.deleteTask = async (id, user) => {
 
         return true;
     } catch (error) {
+        console.log(error);
         throw error;
     }
 };

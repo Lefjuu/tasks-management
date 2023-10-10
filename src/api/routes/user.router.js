@@ -1,6 +1,7 @@
 const express = require('express');
 const { userController } = require('../controller');
 const { localController } = require('../auth/controller');
+const { roleEnum } = require('../model/role.enum');
 
 const router = express.Router();
 
@@ -11,7 +12,7 @@ router.get(
     userController.getUser,
 );
 
-router.use(localController.protect, localController.restrictTo('admin'));
+router.use(localController.protect, localController.restrictTo(roleEnum.ADMIN));
 
 router
     .route('/')
