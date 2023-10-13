@@ -90,7 +90,7 @@ exports.findTasksForDay = async (userId, listId) => {
             userId: userId,
             listId: listId,
         },
-        attributes: ['name', 'id'],
+        attributes: ['name', 'id', 'description'],
     });
 
     return tasks;
