@@ -18,7 +18,7 @@ const generateRefreshToken = (id) => {
     });
 };
 
-exports.generateResponseWithTokensAndUser = async (
+const generateResponseWithTokensAndUser = async (
     user,
     statusCode,
     req,
@@ -56,7 +56,7 @@ exports.generateResponseWithTokensAndUser = async (
     });
 };
 
-exports.generateResponseWithTokens = async (user, statusCode, req, res) => {
+const generateResponseWithTokens = async (user, statusCode, req, res) => {
     const accessToken = await generateAccessToken(user.id);
     const refreshToken = await generateRefreshToken(user.id);
 
@@ -78,10 +78,11 @@ exports.generateResponseWithTokens = async (user, statusCode, req, res) => {
     });
 };
 
-exports.decodeAccessToken = (token) => {
+const decodeAccessToken = (token) => {
     return new Promise((resolve, reject) => {
         jwt.verify(token, JWT_SECRET_ACCESS_KEY, (err, decoded) => {
             if (err) {
+                console.log(err);
                 reject(err);
             } else {
                 resolve(decoded);
@@ -90,7 +91,7 @@ exports.decodeAccessToken = (token) => {
     });
 };
 
-exports.decodeRefreshToken = (token) => {
+const decodeRefreshToken = (token) => {
     return new Promise((resolve, reject) => {
         jwt.verify(token, JWT_SECRET_REFRESH_KEY, (err, decoded) => {
             if (err) {
@@ -100,4 +101,13 @@ exports.decodeRefreshToken = (token) => {
             }
         });
     });
+};
+
+module.exports = {
+    generateAccessToken,
+    generateRefreshToken,
+    generateResponseWithTokensAndUser,
+    generateResponseWithTokens,
+    decodeAccessToken,
+    decodeRefreshToken,
 };
