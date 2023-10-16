@@ -53,7 +53,7 @@ exports.getMonthList = CatchError(async (req, res, next) => {
     if (lists instanceof AppError) {
         return next(lists);
     }
-    if (lists.userId !== req.user.id && req.user.role !== roleEnum.ADMIN) {
+    if (lists[0].userId !== req.user.id && req.user.role !== roleEnum.ADMIN) {
         return next(new AppError('You have no access', 403));
     }
     res.status(200).json({
