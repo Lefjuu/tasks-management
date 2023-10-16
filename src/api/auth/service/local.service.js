@@ -67,7 +67,7 @@ exports.verify = async (token) => {
 };
 
 exports.forgotPassword = async (email, url) => {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ where: { email } });
     if (!user) {
         return new AppError('There is no user with this email address.', 400);
     }
