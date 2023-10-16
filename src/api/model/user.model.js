@@ -163,7 +163,6 @@ User.prototype.loginByLocal = async function (username, password) {
 };
 
 User.prototype.loginBySocial = async function (provider, profile) {
-    console.log(profile);
     try {
         let user = await User.findOne({
             where: {
