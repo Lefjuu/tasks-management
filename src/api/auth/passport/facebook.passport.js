@@ -16,13 +16,8 @@ passport.use(
         },
         async (req, accessToken, refreshToken, profile, done) => {
             try {
-                console.log(profile);
                 let user = new User();
                 user = await user.loginBySocial('facebook', profile);
-                console.log(user);
-                // if (user instanceof AppError) {
-                //     return done(user);
-                // }
                 user = { ...user.dataValues };
 
                 done(null, user);
