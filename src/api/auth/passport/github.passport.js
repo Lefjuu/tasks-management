@@ -13,6 +13,7 @@ passport.use(
             clientID: GITHUB_CLIENT_ID,
             clientSecret: GITHUB_CLIENT_SECRET,
             callbackURL: GITHUB_CALLBACK,
+            passReqToCallback: true,
         },
         async (req, accessToken, refreshToken, profile, done) => {
             try {
