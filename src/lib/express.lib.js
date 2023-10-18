@@ -5,11 +5,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const globalErrorHandler = require('../util/error/ErrorHandler');
 const rateLimit = require('express-rate-limit');
-const {
-    NODE_ENV,
-    CLIENT_HOSTNAME,
-    GOOGLE_SESSION,
-} = require('../config/index.js');
+const { NODE_ENV, GOOGLE_SESSION } = require('../config/index.js');
 const AppError = require('../util/error/AppError');
 const passport = require('passport');
 const session = require('express-session');
@@ -19,7 +15,12 @@ const {
     githubRouter,
     facebookRouter,
 } = require('../api/auth/routes');
-const { userRouter, listRouter, taskRouter } = require('../api/routes');
+const {
+    userRouter,
+    listRouter,
+    taskRouter,
+    managementRouter,
+} = require('../api/routes');
 
 require('../api/auth/passport/index');
 
@@ -79,6 +80,7 @@ const create = async (app) => {
     app.use('/api/v1/users', userRouter);
     app.use('/api/v1/list', listRouter);
     app.use('/api/v1/task', taskRouter);
+    app.use('/api/v1/management', managementRouter);
 
     app.all('*', (req, res, next) => {
         next(
