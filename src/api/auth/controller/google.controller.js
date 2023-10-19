@@ -1,8 +1,6 @@
 const passport = require('passport');
 const { initialize } = require('../service/session.service');
 const JwtUtils = require('../../../util/jwt');
-const { userController } = require('../../controller/index');
-const { User } = require('../../model');
 
 exports.index = function (req, res, next) {
     passport.authenticate('google')(req, res, next);

@@ -8,9 +8,6 @@ function isDateFormat(input) {
 }
 
 exports.getList = async (param, userId, employeeId) => {
-    console.log('param:', param);
-    console.log('userId:', userId);
-    console.log('employeeId:', employeeId);
     let list;
     if (isDateFormat(param) && employeeId) {
         list = await List.findOne({

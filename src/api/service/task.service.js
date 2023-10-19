@@ -14,7 +14,6 @@ exports.createTask = async (task, role) => {
     }
     const createdTask = await Task.create({ ...task });
 
-    console.log(task.listId, task.id);
     const adding = await listService.addTaskToList(task.listId, createdTask.id);
     if (adding instanceof AppError) {
         return next(adding);
