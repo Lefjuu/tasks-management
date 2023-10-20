@@ -47,7 +47,7 @@ exports.getTodayList = async (userId) => {
         .toString()
         .padStart(2, '0')}-${currentYear}`;
 
-    const existingList = await List.findOne({
+    let existingList = await List.findOne({
         where: {
             userId: userId,
             name: formattedDate,
@@ -61,6 +61,8 @@ exports.getTodayList = async (userId) => {
         });
         return createdList;
     }
+    const tasks = await taskService.findTasksForDay(userId, existingList.id);
+    existingList.tasks = tasks;
     return existingList;
 };
 
