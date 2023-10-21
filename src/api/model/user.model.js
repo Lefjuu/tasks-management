@@ -192,10 +192,11 @@ User.prototype.loginBySocial = async function (provider, profile) {
         }
 
         user = await user.save();
-        // console.log(user);
-        // if (user instanceof AppError) {
-        //     throw new AppError('Email address is already in use.', 400);
-        // }
+
+        // TODO:
+        if (user instanceof AppError) {
+            throw new AppError('Email address is already in use.', 400);
+        }
         return user;
     } catch (error) {
         throw error;

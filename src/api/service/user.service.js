@@ -1,7 +1,6 @@
 const { User } = require('../model');
 
 exports.getUser = async (id) => {
-    console.log(id);
     return await User.findByPk(id);
 };
 

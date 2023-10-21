@@ -55,7 +55,6 @@ exports.updateTask = CatchError(async (req, res, next) => {
     if (!task) {
         return next(new AppError('Task not found!', 400));
     }
-    console.log(task);
 
     if (task instanceof AppError) {
         return next(task);

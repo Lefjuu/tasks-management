@@ -10,7 +10,6 @@ exports.getList = CatchError(async (req, res, next) => {
     }
     let list;
     if (req.query.user && req.user.role === roleEnum.ADMIN) {
-        console.log('here');
         list = await listService.getList(param, req.user.id, req.query.user);
         if (list instanceof AppError) {
             return next(list);

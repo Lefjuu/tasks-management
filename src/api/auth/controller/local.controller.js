@@ -102,7 +102,6 @@ exports.refresh = catchError(async (req, res, next) => {
     }
 
     const decoded = await JwtUtils.decodeRefreshToken(refreshToken);
-    console.log(decoded);
     const currentUser = await userService.getUser(decoded.userId);
     if (!currentUser) {
         return next(
