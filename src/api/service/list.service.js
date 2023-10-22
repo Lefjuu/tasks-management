@@ -136,3 +136,44 @@ exports.deleteTaskInList = async (listId, taskId) => {
 
     return list;
 };
+
+exports.getUserMonthList = async (userId, date) => {
+    const [month, year] = date.split('-');
+
+    const firstDayOfMonth = new Date(year, month - 1, 1);
+    const lastDayOfMonth = new Date(year, month, 0);
+
+    const lists = [];
+
+    for (
+        let currentDate = new Date(firstDayOfMonth);
+        currentDate <= lastDayOfMonth;
+        currentDate.setDate(currentDate.getDate() + 1)
+    ) {
+        const day = currentDate.getDate().toString().padStart(2, '0');
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+        const year = currentDate.getFullYear();
+        const formattedDate = `${day}-${month}-${year}`;
+
+        let list = await List.findOne({
+            where: {
+                userId: userId,
+                name: formattedDate,
+            },
+        });
+
+        if (!list) {
+            list = await List.create({
+                userId,
+                name: formattedDate,
+            });
+        }
+
+        const tasks = await taskService.findTasksForDay(userId, list.id);
+        list.tasks = tasks;
+
+        lists.push(list);
+    }
+
+    return lists;
+};

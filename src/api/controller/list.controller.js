@@ -62,3 +62,21 @@ exports.getMonthList = CatchError(async (req, res, next) => {
         },
     });
 });
+
+exports.getUserMonthList = CatchError(async (req, res, next) => {
+    const { userId, month } = req.query;
+    if (!userId || !month) {
+        return next(new AppError('Please provide userId and month', 400));
+    }
+    const list = await listService.getUserMonthList(userId, month);
+    if (list instanceof AppError) {
+        return next(list);
+    }
+
+    res.status(200).json({
+        status: 'success',
+        data: {
+            data: list,
+        },
+    });
+});
