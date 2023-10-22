@@ -12,6 +12,8 @@ exports.createTask = async (task, role) => {
     if (list.userId !== task.userId && role !== roleEnum.ADMIN) {
         throw new AppError('You have no access', 401);
     }
+
+    task.userId = list.userId;
     const createdTask = await Task.create({ ...task });
 
     const adding = await listService.addTaskToList(task.listId, createdTask.id);
