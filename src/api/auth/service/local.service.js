@@ -91,21 +91,30 @@ exports.forgotPassword = async (email, url) => {
     }
 };
 
-exports.resetPassword = async (token, password, confirmPassword) => {
-    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
-
+exports.resetPassword = async (
+    userId,
+    currentPassword,
+    newPassword,
+    confirmPassword,
+) => {
+    console.log(newPassword);
     const user = await User.findOne({
-        passwordResetToken: hashedToken,
-        passwordResetExpires: { $gt: Date.now() },
+        where: {
+            id: userId,
+        },
     });
+    // if (
+    //     !user ||
+    //     !(await user.correctPassword(currentPassword, user.password))
+    // ) {
+    //     return new AppError('Incorrect password', 400);
+    // }
 
     if (!user) {
-        return new AppError('Token is invalid or has expired', 400);
+        return new AppError('User not found', 400);
     }
-    user.password = password;
-    user.passwordConfirm = confirmPassword;
-    user.passwordResetToken = undefined;
-    user.passwordResetExpires = undefined;
+
+    user.password = newPassword;
     await user.save();
     return user;
 };
