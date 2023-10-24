@@ -38,6 +38,7 @@ exports.createTask = CatchError(async (req, res, next) => {
     }
     const task = await taskService.createTask(req.body, req.user.role);
 
+    console.log(task);
     res.status(201).json({
         status: 'success',
         data: {
