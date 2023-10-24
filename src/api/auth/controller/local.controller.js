@@ -102,7 +102,6 @@ exports.refresh = catchError(async (req, res, next) => {
     }
 
     const decoded = await JwtUtils.decodeRefreshToken(refreshToken);
-    console.log(decoded);
     const currentUser = await userService.getUser(decoded.userId);
     if (!currentUser) {
         return next(
@@ -139,15 +138,19 @@ exports.forgotPassword = catchError(async (req, res, next) => {
 });
 
 exports.resetPassword = catchError(async (req, res, next) => {
-    const { password, confirmPassword } = req.body;
-    if (!password || !confirmPassword) {
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+    if (!currentPassword || !newPassword || !confirmPassword) {
         return next(
-            new AppError('Please provide password and confirm password!', 400),
+            new AppError(
+                'Please provide current password, new password and confirm password!',
+                400,
+            ),
         );
     }
     const data = await localService.resetPassword(
-        req.params.token,
-        password,
+        req.params.id,
+        currentPassword,
+        newPassword,
         confirmPassword,
     );
     if (data instanceof AppError) {

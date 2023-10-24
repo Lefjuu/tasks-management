@@ -100,8 +100,10 @@ const User = sequelize.define(
                 }
                 user.password = await bcrypt.hash(user.password, 12);
             },
-            beforeUpdate(user) {
+            async beforeUpdate(user) {
                 if (user.changed('password')) {
+                    user.password = await bcrypt.hash(user.password, 12);
+                    console.log(user.password);
                     user.passwordChangedAt = new Date() - 1000;
                 }
             },
@@ -192,7 +194,8 @@ User.prototype.loginBySocial = async function (provider, profile) {
         }
 
         user = await user.save();
-        // console.log(user);
+
+        // TODO:
         // if (user instanceof AppError) {
         //     throw new AppError('Email address is already in use.', 400);
         // }

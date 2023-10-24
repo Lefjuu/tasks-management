@@ -38,6 +38,7 @@ exports.createTask = CatchError(async (req, res, next) => {
     }
     const task = await taskService.createTask(req.body, req.user.role);
 
+    console.log(task);
     res.status(201).json({
         status: 'success',
         data: {
@@ -55,7 +56,6 @@ exports.updateTask = CatchError(async (req, res, next) => {
     if (!task) {
         return next(new AppError('Task not found!', 400));
     }
-    console.log(task);
 
     if (task instanceof AppError) {
         return next(task);

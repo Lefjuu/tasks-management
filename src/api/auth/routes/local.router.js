@@ -11,6 +11,6 @@ router.post('/verify/:token', localController.verify);
 router.get('/refresh', localController.refresh);
 
 router.post('/forgot-password', localController.forgotPassword);
-router.patch('/reset-password/:token', localController.resetPassword);
+router.patch('/reset-password/:id', localController.resetPassword);
 
 module.exports = router;
