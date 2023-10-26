@@ -41,7 +41,7 @@ exports.deleteUser = async (id) => {
 
 exports.updateUser = async (id, body, user) => {
     const updatingUser = await User.findByPk(id);
-    if (user.role === roleEnum.ADMIN || user.id === updatingUser.userId) {
+    if (user.role !== roleEnum.ADMIN && user.id !== updatingUser.userId) {
         throw new AppError('You have no access', 401);
     }
     if (!updatingUser) {
