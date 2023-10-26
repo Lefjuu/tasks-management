@@ -20,6 +20,10 @@ exports.getUserWithoutPermission = async (id) => {
     return user;
 };
 
+exports.getAllUsers = async () => {
+    return await User.findAll();
+};
+
 exports.getUser = async (id, user) => {
     if (user.role !== roleEnum.ADMIN && parseInt(id) !== user.id) {
         throw new AppError('You have no access', 401);
