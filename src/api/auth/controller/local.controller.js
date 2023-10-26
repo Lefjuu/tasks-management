@@ -1,7 +1,8 @@
-const { localService, userService } = require('../service');
+const { localService } = require('../service');
 const catchError = require('../../../util/error/CatchError');
 const AppError = require('../../../util/error/AppError');
 const JwtUtils = require('../../../util/jwt');
+const { userService } = require('../../service');
 
 exports.login = catchError(async (req, res, next) => {
     const { login, password } = req.body;
@@ -69,7 +70,9 @@ exports.protect = catchError(async (req, res, next) => {
     }
 
     const decoded = await JwtUtils.decodeAccessToken(token);
-    const currentUser = await userService.getUser(decoded.userId);
+    const currentUser = await userService.getUserWithoutPermission(
+        decoded.userId,
+    );
     if (!currentUser) {
         return next(
             new AppError(
@@ -78,7 +81,6 @@ exports.protect = catchError(async (req, res, next) => {
             ),
         );
     }
-
     req.user = currentUser;
     next();
 });
