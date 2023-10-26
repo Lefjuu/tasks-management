@@ -3,7 +3,7 @@ const CatchError = require('../../util/error/CatchError');
 const UserService = require('../service/user.service');
 
 exports.getUser = CatchError(async (req, res, next) => {
-    const user = await UserService.getUser(req.params.id);
+    const user = await UserService.getUser(req.params.id, req.user);
     if (!user) {
         return next(new AppError('User not found with that ID', 400));
     }
@@ -62,7 +62,11 @@ exports.updateUser = CatchError(async (req, res, next) => {
     if (req.body.password) {
         return next(new AppError(`Don't update password!`, 400));
     }
-    const user = await UserService.updateUser(req.params.id, req.body);
+    const user = await UserService.updateUser(
+        req.params.id,
+        req.body,
+        req.user,
+    );
     if (!user) {
         return next(new AppError('User not found', 400));
     }

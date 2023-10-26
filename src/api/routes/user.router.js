@@ -12,17 +12,24 @@ router.get(
     userController.getUser,
 );
 
-router.use(localController.protect, localController.restrictTo(roleEnum.ADMIN));
+// router.use(localController.protect);
 
 router
     .route('/')
-    .get(userController.getAllUsers)
-    .post(userController.createUser);
+    .get(
+        localController.protect,
+        localController.restrictTo(roleEnum.ADMIN),
+        userController.getAllUsers,
+    );
 
 router
     .route('/:id')
     .get(localController.protect, userController.getUser)
-    .patch(userController.updateUser)
-    .delete(userController.deleteUser);
+    .patch(localController.protect, userController.updateUser)
+    .delete(
+        localController.protect,
+        localController.restrictTo(roleEnum.ADMIN),
+        userController.deleteUser,
+    );
 
 module.exports = router;
