@@ -1,9 +1,23 @@
+const { getAsync, setAsync } = require('../../lib/redis.lib');
 const AppError = require('../../util/error/AppError');
 const { User } = require('../model');
 const { roleEnum } = require('../model/role.enum');
 
 exports.getUserWithoutPermission = async (id) => {
-    return await User.findByPk(id);
+    const redisKey = `user:${id}`;
+
+    const userDataFromRedis = await getAsync(redisKey);
+
+    if (userDataFromRedis) {
+        const userData = JSON.parse(userDataFromRedis);
+        return userData;
+    }
+
+    const user = await User.findByPk(id);
+
+    await setAsync(redisKey, JSON.stringify(user));
+
+    return user;
 };
 
 exports.getUser = async (id, user) => {
