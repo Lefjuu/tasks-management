@@ -139,7 +139,7 @@ exports.forgotPassword = catchError(async (req, res, next) => {
     });
 });
 
-exports.resetPassword = catchError(async (req, res, next) => {
+exports.newPassword = catchError(async (req, res, next) => {
     const { currentPassword, newPassword, confirmPassword } = req.body;
     if (!currentPassword || !newPassword || !confirmPassword) {
         return next(
@@ -149,10 +149,34 @@ exports.resetPassword = catchError(async (req, res, next) => {
             ),
         );
     }
-    const data = await localService.resetPassword(
+    const data = await localService.newPassword(
         req.params.id,
         currentPassword,
         newPassword,
+        confirmPassword,
+    );
+    if (data instanceof AppError) {
+        return next(data);
+    }
+
+    return await JwtUtils.generateResponseWithTokensAndUser(
+        data,
+        200,
+        req,
+        res,
+    );
+});
+
+exports.resetPassword = catchError(async (req, res, next) => {
+    const { password, confirmPassword } = req.body;
+    if (!password || !confirmPassword) {
+        return next(
+            new AppError('Please provide password and confirm password!', 400),
+        );
+    }
+    const data = await localService.resetPassword(
+        req.params.token,
+        password,
         confirmPassword,
     );
     if (data instanceof AppError) {
