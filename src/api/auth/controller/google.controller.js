@@ -1,6 +1,7 @@
 const passport = require('passport');
 const { initialize } = require('../service/session.service');
 const JwtUtils = require('../../../util/jwt');
+const { CLIENT_HOSTNAME } = require('../../../config');
 
 exports.index = function (req, res, next) {
     passport.authenticate('google')(req, res, next);
@@ -19,7 +20,7 @@ exports.callback = function (req, res, next) {
         const refreshToken = await JwtUtils.generateRefreshToken(user.id);
 
         return res.redirect(
-            `http://localhost:3000/login?accesstoken=${accessToken}&refreshtoken=${refreshToken}`,
+            `${CLIENT_HOSTNAME}/login?accesstoken=${accessToken}&refreshtoken=${refreshToken}`,
         );
     })(req, res, next);
 };
