@@ -13,15 +13,18 @@ exports.getTask = CatchError(async (req, res, next) => {
         task = await taskService.getTask(id);
         if (task instanceof AppError) {
             return next(task);
+        } else if (task === null) {
+            return next(new AppError('Task not found', 400));
         }
     } else {
         task = await taskService.getTask(id);
         if (task instanceof AppError) {
             return next(task);
+        } else if (task === null) {
+            return next(new AppError('You have no access.', 403));
         }
-        console.log(task);
         if (task.userId !== req.user.id && req.user.role !== roleEnum.ADMIN) {
-            return next(new AppError('You have no access', 403));
+            return next(new AppError('You have no access.', 403));
         }
     }
     res.status(200).json({
@@ -33,8 +36,14 @@ exports.getTask = CatchError(async (req, res, next) => {
 });
 
 exports.createTask = CatchError(async (req, res, next) => {
-    if (!req.body.name) {
-        return next(new AppError('Please provide name!', 400));
+    if (!req.body.name || !req.body.listId) {
+        return next(new AppError('Please provide all values.', 400));
+    }
+    if (!req.body.userId) {
+        req.body.userId = req.user.id;
+    }
+    if (req.user.id !== req.body.userId) {
+        return next(new AppError('You have no access.', 403));
     }
     const task = await taskService.createTask(req.body, req.user.role);
 
