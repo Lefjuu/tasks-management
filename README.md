@@ -44,7 +44,7 @@ Here are some of the key dependencies used in the application:
 
 - **expressjs:** Handles and routes HTTP requests.
 - **jsonwebtoken:** Generates JWTs for authentication.
-- **mongoose:** Maps MongoDB data to JavaScript.
+- **sequalize:** Maps PostgreSQL data to JavaScript.
 - **validator:** Provides string validation and sanitization.
 - **passport:** Implements OAuth authentication with Facebook, Google, and GitHub.
 - **redis:** Used for caching temporary data.
@@ -58,7 +58,7 @@ Here are some of the key dependencies used in the application:
 - **lib/:** Contains config and connections to start servers.
 - **api/auth/:** Defines everything about authorization.
 - **api/controller/:** Contains functions for handling routes.
-- **api/model/:** Contains schema definitions for MongoDB models.
+- **api/model/:** Contains schema definitions for PostgreSQL models.
 - **api/routes/:** Defines route definitions for the API.
 - **api/service/:** Includes database queries and other activities.
 - **util/:** Contains additional features that don't fit elsewhere.
