@@ -74,13 +74,12 @@ exports.deleteTask = async (id, user) => {
             await listService.deleteTaskInList(task.listId, task.id);
         }
 
-        if (isDeleted === 0) {
+        if (isDeleted === 0 || isDeleted === undefined) {
             return false;
         }
 
         return true;
     } catch (error) {
-        console.log(error);
         throw error;
     }
 };
