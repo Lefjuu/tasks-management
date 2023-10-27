@@ -5,7 +5,11 @@ const cors = require('cors');
 const morgan = require('morgan');
 const globalErrorHandler = require('../util/error/ErrorHandler');
 const rateLimit = require('express-rate-limit');
-const { NODE_ENV, GOOGLE_SESSION } = require('../config/index.js');
+const {
+    NODE_ENV,
+    GOOGLE_SESSION,
+    CLIENT_HOSTNAME,
+} = require('../config/index.js');
 const AppError = require('../util/error/AppError');
 const passport = require('passport');
 const session = require('express-session');
@@ -54,7 +58,7 @@ const create = async (app) => {
     app.use(passport.session());
 
     const corsOptions = {
-        origin: 'http://localhost:3000',
+        origin: CLIENT_HOSTNAME,
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
         credentials: true,
         preflightContinue: false,
