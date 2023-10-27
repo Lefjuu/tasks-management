@@ -92,7 +92,6 @@ exports.forgotPassword = async (email, url) => {
 };
 
 exports.newPassword = async (userId, currentPassword, newPassword) => {
-    console.log(newPassword);
     const user = await User.findOne({
         where: {
             id: userId,

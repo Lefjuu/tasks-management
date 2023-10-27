@@ -150,7 +150,7 @@ exports.newPassword = catchError(async (req, res, next) => {
         );
     }
     const data = await localService.newPassword(
-        req.params.id,
+        req.user.id,
         currentPassword,
         newPassword,
         confirmPassword,
