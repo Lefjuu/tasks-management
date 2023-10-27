@@ -1,5 +1,3 @@
-Certainly! Here's the updated documentation for your Task Management Application, including information about Passport for OAuth authentication, Redis for caching, and Nodemailer for sending emails:
-
 # Task Management Application Documentation
 
 Welcome to the Task Management Application documentation. This application allows users to manage tasks efficiently and collaboratively. Below, you will find essential information about the application, installation, technology stack, and authentication.
@@ -22,7 +20,7 @@ To set up the Task Management Application locally, follow these steps:
 1. Clone the back-end repository:
 
    ```bash
-   git clone https://github.com/Lefjuu/task-app-backend
+   git clone https://github.com/Lefjuu/tasks-management
    ```
 
 2. Create an environment file (`.env`) with your configuration, including OAuth client IDs and secrets for Facebook, Google, and GitHub.
@@ -66,6 +64,10 @@ Here are some of the key dependencies used in the application:
 - **util/:** Contains additional features that don't fit elsewhere.
 
 ## Authentication
+
+For a detailed API documentation and examples, please refer to the Postman Documentation. This documentation contains information about available API endpoints, their descriptions, parameters, responses, and authentication methods.
+
+Developers and users can access the Postman documentation for a comprehensive guide on using the API and integrating it into their workflow effectively.
 
 Authentication in the Task Management Application is based on JSON Web Tokens (JWT) and Passport. Passport is used to implement OAuth authentication with Facebook, Google, and GitHub. To ensure secure requests, the `Authorization` header is used with a valid JWT. Middleware is provided for request authentication. The required middleware configures JWT with the application's secret, resulting in a 401 status code for unauthenticated requests. The payload of the JWT can be accessed in the endpoint as `req.payload`. The optional middleware is configured the same way but doesn't return a 401 status code for unauthenticated requests.
 
