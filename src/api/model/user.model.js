@@ -173,16 +173,6 @@ User.prototype.loginBySocial = async function (provider, profile) {
             },
         });
 
-        // // if (provider === 'facebook') {
-        // const emailExists = await User.findOne({
-        //     where: { email: profile.email },
-        // });
-
-        // if (emailExists) {
-        //     throw new AppError('Email address is already in use.', 400);
-        // }
-        // // }
-
         if (!user) {
             user = await User.create({
                 provider: provider,
@@ -195,10 +185,6 @@ User.prototype.loginBySocial = async function (provider, profile) {
 
         user = await user.save();
 
-        // TODO:
-        // if (user instanceof AppError) {
-        //     throw new AppError('Email address is already in use.', 400);
-        // }
         return user;
     } catch (error) {
         throw error;
