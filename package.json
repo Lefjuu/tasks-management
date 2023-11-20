@@ -6,8 +6,7 @@
     "scripts": {
         "start": "nodemon ./src/index.js",
         "start:prod": "set NODE_ENV=production && nodemon ./src/index.js",
-        "debug": "ndb index.js",
-        "vercel-build": "echo hello"
+        "debug": "ndb index.js"
     },
     "author": "Lefju",
     "license": "ISC",
