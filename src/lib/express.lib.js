@@ -76,6 +76,10 @@ const create = async (app) => {
         app.use(morgan('dev'));
     }
 
+    app.use('/', (req, res, next) => {
+        res.send('Task Management API');
+    });
+
     // app.use('/api/v1/auth', authRoutes);
     app.use('/api/v1/auth', localRouter);
     app.use('/api/v1/auth', googleRouter);
