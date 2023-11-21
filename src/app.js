@@ -4,6 +4,7 @@ const { db } = require('./lib/postgres.lib.js');
 const { redisClient } = require('./lib/redis.lib.js');
 const { User, Task, List } = require('./api/model');
 const app = express();
+const serverless = require('serverless-http');
 
 const init = async () => {
     // express
@@ -24,4 +25,5 @@ const init = async () => {
     })();
 };
 
+module.exports.handler = serverless(app);
 module.exports = { init, app };
