@@ -58,7 +58,8 @@ const create = async (app) => {
     app.use(passport.session());
 
     const corsOptions = {
-        origin: CLIENT_HOSTNAME,
+        // origin: CLIENT_HOSTNAME,
+        origin: '*',
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
         credentials: true,
         preflightContinue: false,
