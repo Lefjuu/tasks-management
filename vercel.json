@@ -1,27 +1,5 @@
 {
     "version": 2,
     "builds": [{ "src": "./src/index.js", "use": "@vercel/node" }],
-    "routes": [
-        { "handle": "filesystem" },
-        {
-            "src": "/api/v1/auth(.*)",
-            "dest": "./src/index.js"
-        },
-        {
-            "src": "/api/v1/users(.*)",
-            "dest": "./src/index.js"
-        },
-        {
-            "src": "/api/v1/list(.*)",
-            "dest": "./src/index.js"
-        },
-        {
-            "src": "/api/v1/task(.*)",
-            "dest": "./src/index.js"
-        },
-        {
-            "src": "/api/v1/management(.*)",
-            "dest": "./src/index.js"
-        }
-    ]
+    "routes": [{ "src": "/(.*)", "dest": "/" }]
 }
